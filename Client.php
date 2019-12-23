@@ -20,8 +20,9 @@
  *
  *
  */
-
+include("NasaConsumer.php");
 define ("SLOT_DA_ULTIMA_PALAVRA", count($argv)-1);
+
 
 function recolherTexto(){
     global $argc, $argv;
@@ -83,3 +84,10 @@ function criarFicheiro(){
 //guardarDownload();
 criarFicheiro();
 //echo (recolherTexto());
+
+//-----------------------------Protocologo de execução
+$NasaImages = new NasaConsumer(recolherTexto());
+var_dump($NasaImages->builderOfViableUrls());
+
+
+//-----------------------------Protocologo de execução
