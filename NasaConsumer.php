@@ -4,47 +4,49 @@ class NasaConsumer {
     private  $keyword ; // key word da pesquisa
     const NASA_CONSUMER_SYSTEM_FOLDER_PATH = "C:/Users/Public/Documents/NasaConsumerFiles";
     const NASA_CONSUMER_PATH_FOR_ALL_SUB_FOLDERS ="C:/Users/Public/Documents/NasaConsumerFiles/";
-    public  $JSON_FILE_NAME;
-    public $limit;
+    private $JSON_FILE_NAME;
+    private $limit = 0;
 
-    function __construct($pKeyWord) // construtor que recebe uma string que é a Keyword da pesquisa
+  function __construct($pKeyWord) // construtor que recebe uma string que é a Keyword da pesquisa e um limit para a procura
     {
         $this->keyword = $pKeyWord;
         $this ->JSON_FILE_NAME = date("Ymd").".json";
     }//__construct
 
-  function ___construct($pKeyWord, $limit) // construtor que recebe uma string que é a Keyword da pesquisa e um limit para a procura
-    {
-        $this->keyword = $pKeyWord;
-        $this->limit = $limit;
-    }//__construct
-  
-    public function builderOfViableUrls():Array{
+    public function setLimitOfPages($pLimit){
+      $this->limit=$pLimit;
+    }//setLimitOfPages
 
+
+    public function builderOfViableUrls():Array{
         /*
          * função que vai construir todos os urls
-         * relatiovs ao json que contem as imagens*/
-        $bUrlIsvalid = true; //paremtro de continuação do ciclo
-        $itenerator = 0; // parametro que servira com itenerador que percorrera as paginas
+         * relatiovs ao json que contem as imagens
+         */
+        $bUrlIsValid = true; //paremtro de continuação do ciclo
+        $iterators = 0; // parametro que servira com itenerador que percorrera as paginas
         $previousUrlIdentity="";//varialvel que guarda o sha1 do conteudo do json anterios
         $AllValidUrls =[];//variavel que ira guardar todos os urls possiveis
-        $limitador = 0;
         echo("Loading");
-        while($bUrlIsvalid && $limitador <= $this->limit){
+        while($bUrlIsValid){
             $url = sprintf("https://www.jpl.nasa.gov/assets/json/getMore.php?images=true&search=%s&category=&page=%o",
             $this->keyword,
-                $itenerator
+                $iterators
             );// construção do url
             $urlIdentity = sha1(file_get_contents($url));//codificação do json em sha1
-
-             if ($urlIdentity !== $previousUrlIdentity){//verivicação se o json é unico
-                 echo(".");
-                 array_push($AllValidUrls, $url);//adiciona-se o url ao array
-                 $previousUrlIdentity = $urlIdentity;// guarda-se o sha1 par comparar com o proxim
-                 $itenerator++;//adiciona-se o itenerador
+             if (($urlIdentity !== $previousUrlIdentity)){//verivicação se o json é unico
+                 if(($iterators == $this->limit) && ($this->limit !=0)){
+                     echo(".".PHP_EOL);
+                     $bUrlIsValid = false;
+                 }else{
+                     echo(".");
+                     array_push($AllValidUrls, $url);//adiciona-se o url ao array
+                     $previousUrlIdentity = $urlIdentity;// guarda-se o sha1 par comparar com o proxim
+                     $iterators++;//adiciona-se o itenerador
+                 }
              }else{
                  echo(".".PHP_EOL);
-                 $bUrlIsvalid = false;//caso o json não seja unico acaba-se o cilco
+                 $bUrlIsValid = false;//caso o json não seja unico acaba-se o cilco
              }
 
         }
