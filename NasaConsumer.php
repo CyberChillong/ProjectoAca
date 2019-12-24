@@ -17,6 +17,7 @@ class NasaConsumer {
         $itenerator = 0; // parametro que servira com itenerador que percorrera as paginas
         $previousUrlIdentity="";//varialvel que guarda o sha1 do conteudo do json anterios
         $AllValidUrls =[];//variavel que ira guardar todos os urls possiveis
+        echo("Loading");
         while($bUrlIsvalid){
             $url = sprintf("https://www.jpl.nasa.gov/assets/json/getMore.php?images=true&search=%s&category=&page=%o",
             $this->keyword,
@@ -25,6 +26,7 @@ class NasaConsumer {
             $urlIdentity = sha1(file_get_contents($url));//codificação do json em sha1
 
              if ($urlIdentity !== $previousUrlIdentity){//verivicação se o json é unico
+                 echo(".");
                  array_push($AllValidUrls, $url);//adiciona-se o url ao array
                  $previousUrlIdentity = $urlIdentity;// guarda-se o sha1 par comparar com o proxim
                  $itenerator++;//adiciona-se o itenerador
@@ -38,5 +40,6 @@ class NasaConsumer {
         return $AllValidUrls; // retorna o array com os url conseguidos
 
     }//builderOfViableUrls
+
 
 }//NasaConsumer
