@@ -5,7 +5,6 @@ class NasaConsumer {
     const NASA_CONSUMER_SYSTEM_FOLDER_PATH = "C:/Users/Public/Documents/NasaConsumerFiles";
     const NASA_CONSUMER_PATH_FOR_ALL_SUB_FOLDERS ="C:/Users/Public/Documents/NasaConsumerFiles/";
     public  $JSON_FILE_NAME;
-    public $keyword ; // key word da pesquisa
     public $limit;
 
     function __construct($pKeyWord) // construtor que recebe uma string que é a Keyword da pesquisa
