@@ -5,13 +5,23 @@ class NasaConsumer {
     const NASA_CONSUMER_SYSTEM_FOLDER_PATH = "C:/Users/Public/Documents/NasaConsumerFiles";
     const NASA_CONSUMER_PATH_FOR_ALL_SUB_FOLDERS ="C:/Users/Public/Documents/NasaConsumerFiles/";
     public  $JSON_FILE_NAME;
+    public $keyword ; // key word da pesquisa
+    public $limit;
+
     function __construct($pKeyWord) // construtor que recebe uma string que é a Keyword da pesquisa
     {
         $this->keyword = $pKeyWord;
         $this ->JSON_FILE_NAME = date("Ymd").".json";
     }//__construct
 
-    private function builderOfViableUrls():Array{
+  function ___construct($pKeyWord, $limit) // construtor que recebe uma string que é a Keyword da pesquisa e um limit para a procura
+    {
+        $this->keyword = $pKeyWord;
+        $this->limit = $limit;
+    }//__construct
+  
+    public function builderOfViableUrls():Array{
+
         /*
          * função que vai construir todos os urls
          * relatiovs ao json que contem as imagens*/
@@ -19,8 +29,9 @@ class NasaConsumer {
         $itenerator = 0; // parametro que servira com itenerador que percorrera as paginas
         $previousUrlIdentity="";//varialvel que guarda o sha1 do conteudo do json anterios
         $AllValidUrls =[];//variavel que ira guardar todos os urls possiveis
+        $limitador = 0;
         echo("Loading");
-        while($bUrlIsvalid){
+        while($bUrlIsvalid && $limitador <= $this->limit){
             $url = sprintf("https://www.jpl.nasa.gov/assets/json/getMore.php?images=true&search=%s&category=&page=%o",
             $this->keyword,
                 $itenerator
