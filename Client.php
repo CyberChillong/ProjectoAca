@@ -87,8 +87,8 @@ criarFicheiro();
 
 //-----------------------------Protocologo de execução
 $NasaImages = new NasaConsumer(recolherTexto());
-//$NasaImages->setLimitOfPages(2);
+$NasaImages->setLimitOfPages(2);
 $NasaImages->saveAllPossibleJsonUrl();
-
+$NasaImages->extractImagesUrlsFromJson();
 
 //-----------------------------Protocologo de execução

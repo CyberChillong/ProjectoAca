@@ -2,8 +2,10 @@
 date_default_timezone_set("Europe/Lisbon");
 class NasaConsumer {
     private  $keyword ; // key word da pesquisa
-    const NASA_CONSUMER_SYSTEM_FOLDER_PATH = "C:/Users/Public/Documents/NasaConsumerFiles";
-    const NASA_CONSUMER_PATH_FOR_ALL_SUB_FOLDERS ="C:/Users/Public/Documents/NasaConsumerFiles/";
+    const NASA_CONSUMER_SYSTEM_FOLDER_PATH = "C:/Users/Public/Documents/NasaConsumerFiles/";
+    const NASA_CONSUMER_PATH_FOR_JSON_PAGES_URLS ="C:/Users/Public/Documents/NasaConsumerFiles/JsonPagesUrls/";
+    const NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS ="C:/Users/Public/Documents/NasaConsumerFiles/JsonImagesUrls/";
+    Const BASE_IMAGE_URL = "https://www.jpl.nasa.gov";
     private $JSON_FILE_NAME;
     private $limit;
 
@@ -36,7 +38,7 @@ class NasaConsumer {
             );// construção do url
             $urlIdentity = sha1(file_get_contents($url));//codificação do json em sha1
              if (($urlIdentity !== $previousUrlIdentity)){//verivicação se o json é unico
-                 if(($iterators == $this->limit) && ($this->limit !=0)){
+                 if(($iterators == $this->limit) && ($this->limit!=0)){
                      echo(".".PHP_EOL);
                      $bUrlIsValid = false;
                  }else{
@@ -57,42 +59,69 @@ class NasaConsumer {
 
     }//builderOfViableUrls
 
-    private function confirmExistenceOfSystemFolder():bool{
-        return  file_exists(self::NASA_CONSUMER_SYSTEM_FOLDER_PATH  );
+    private function confirmExistenceOfFolderOrFile($Path):bool{
+        return  file_exists($Path);
 
 
 
-    }//confirmExistenceOfFolder
-
-    private function confirmExistenceOfJsonFile():bool{
-        return  file_exists(self::NASA_CONSUMER_PATH_FOR_ALL_SUB_FOLDERS.$this->JSON_FILE_NAME);
+    }//confirmExistenceOfFolderOrFile
 
 
-    }//confirmExistenceOfFolder
+
+
+
     public function saveAllPossibleJsonUrl(){
         $JsonUrls = $this->builderOfViableUrls();
         $JsonUrlEncoded = json_encode(array('JsonUrls' => $JsonUrls));
-        if($this->confirmExistenceOfSystemFolder()===true){
-            if($this->confirmExistenceOfJsonFile()===true){
-               $JsonFile =  file_get_contents(self::NASA_CONSUMER_PATH_FOR_ALL_SUB_FOLDERS.$this->JSON_FILE_NAME);
+        if($this->confirmExistenceOfFolderOrFile(self::NASA_CONSUMER_SYSTEM_FOLDER_PATH)===true){
+            if($this->confirmExistenceOfFolderOrFile(self::NASA_CONSUMER_PATH_FOR_JSON_PAGES_URLS)===true &&
+                $this->confirmExistenceOfFolderOrFile(self::NASA_CONSUMER_PATH_FOR_JSON_PAGES_URLS.$this->JSON_FILE_NAME)===true){
+               $JsonFile =  file_get_contents(self::NASA_CONSUMER_PATH_FOR_JSON_PAGES_URLS.$this->JSON_FILE_NAME);
                $JsonContent = json_decode($JsonFile, true);
                $JsonArray = $JsonContent['JsonUrls'];
                foreach ($JsonUrls as $url){
                    array_push($JsonArray, $url);
                }
-               file_put_contents(self::NASA_CONSUMER_PATH_FOR_ALL_SUB_FOLDERS.$this->JSON_FILE_NAME, json_encode(array('JsonUrls' =>$JsonArray)));
+               file_put_contents(self::NASA_CONSUMER_PATH_FOR_JSON_PAGES_URLS.$this->JSON_FILE_NAME, json_encode(array('JsonUrls' =>$JsonArray)));
                 echo "Added data JSON file successfully".PHP_EOL;
             }else{
-                file_put_contents(self::NASA_CONSUMER_PATH_FOR_ALL_SUB_FOLDERS.$this->JSON_FILE_NAME, $JsonUrlEncoded);
+                mkdir(self::NASA_CONSUMER_PATH_FOR_JSON_PAGES_URLS , 755);
+                echo "Json Pages Urls  folder created successfully".PHP_EOL;
+                file_put_contents(self::NASA_CONSUMER_PATH_FOR_JSON_PAGES_URLS.$this->JSON_FILE_NAME, $JsonUrlEncoded);
                 echo "JSON file created successfully".PHP_EOL;
             }
         }else{
             mkdir(self::NASA_CONSUMER_PATH_FOR_ALL_SUB_FOLDERS  , 755);
             echo "System folder created successfully".PHP_EOL;
+            mkdir(self::NASA_CONSUMER_PATH_FOR_JSON_PAGES_URLS , 755);
+            echo "Json Pages Urls  folder created successfully".PHP_EOL;
             file_put_contents(self::NASA_CONSUMER_PATH_FOR_ALL_SUB_FOLDERS.$this->JSON_FILE_NAME, $JsonUrlEncoded);
             echo "JSON file created successfully".PHP_EOL;
         }
     }//saveAllPossibleJsonUrl
 
+    public function extractImagesUrlsFromJson(){
+        $ImageUrlArray = [];
+        $JsonFile =  file_get_contents(self::NASA_CONSUMER_PATH_FOR_JSON_PAGES_URLS.$this->JSON_FILE_NAME);
+        $JsonContent = json_decode($JsonFile, true);
+        $item = $JsonContent['JsonUrls'];
+        foreach ($item as $url){
+            $JsonImageFile =  file_get_contents($url);
+            $JsonImageContent = json_decode($JsonImageFile, true);
+            $imageArray = $JsonImageContent['items'];
+            foreach ($imageArray as $image){
+             array_push($ImageUrlArray ,self::BASE_IMAGE_URL.$image['images']['full']['src']);
+            }
+        }
+        if($this->confirmExistenceOfFolderOrFile(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS)==true){
+        file_put_contents(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS.$this->JSON_FILE_NAME , json_encode(array('JsonImageUrls' =>$ImageUrlArray)));
+        echo "Image url saved successfully";
+        }else{
+            mkdir(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS  , 755);
+            file_put_contents(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS.$this->JSON_FILE_NAME , json_encode(array('JsonImageUrls' =>$ImageUrlArray)));
+            echo "Image url saved successfully";
+        }
+
+    }//extractImagesUrlsFromJson
 
 }//NasaConsumer
