@@ -5,11 +5,12 @@ class NasaConsumer {
     const NASA_CONSUMER_SYSTEM_FOLDER_PATH = "C:/Users/Public/Documents/NasaConsumerFiles";
     const NASA_CONSUMER_PATH_FOR_ALL_SUB_FOLDERS ="C:/Users/Public/Documents/NasaConsumerFiles/";
     private $JSON_FILE_NAME;
-    private $limit = 0;
+    private $limit;
 
   function __construct($pKeyWord) // construtor que recebe uma string que é a Keyword da pesquisa e um limit para a procura
     {
         $this->keyword = $pKeyWord;
+        $this->limit=0;
         $this ->JSON_FILE_NAME = date("Ymd").".json";
     }//__construct
 
@@ -76,7 +77,6 @@ class NasaConsumer {
                $JsonFile =  file_get_contents(self::NASA_CONSUMER_PATH_FOR_ALL_SUB_FOLDERS.$this->JSON_FILE_NAME);
                $JsonContent = json_decode($JsonFile, true);
                $JsonArray = $JsonContent['JsonUrls'];
-               echo gettype($JsonArray);
                foreach ($JsonUrls as $url){
                    array_push($JsonArray, $url);
                }
