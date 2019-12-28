@@ -7,6 +7,7 @@ class NasaConsumer {
     const NASA_CONSUMER_PATH_FOR_JSON_PAGES_URLS ="C:/Users/Public/Documents/NasaConsumerFiles/JsonPagesUrls/";
     const NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS ="C:/Users/Public/Documents/NasaConsumerFiles/JsonImagesUrls/";
     Const BASE_IMAGE_URL = "https://www.jpl.nasa.gov";
+
     private $JSON_FILE_NAME;
     private $limit;
 
@@ -131,11 +132,10 @@ class NasaConsumer {
             foreach ($imageArray as $image){
                 array_push($ImageUrlArray ,self::BASE_IMAGE_URL.$image['images']['full']['src']);
             }
-
-
         }
         return $ImageUrlArray;
     }//justDownloadTheImagesDirectlyFromJsonPagesUrls
+
 
 
 }//NasaConsumer

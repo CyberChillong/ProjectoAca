@@ -53,32 +53,6 @@ function recolherTexto(){
     return $strTextoAcrescentado;
 }//recolherTexto
 
-function pastaExiste($folder){
-    $path = realpath($folder);
-    // Se existir verifica o caminho senão afirma que não existe
-    if($path !== (false AND is_dir($path)))
-    {
-        // Returna o caminho absoluto
-        return $path;
-    }
-    // Path/folder não existe
-    return false;
-}//pastaExiste
-
-function guardarDownload(){
-    //se a pasta não existir é criada com aquele path
-    if(pastaExiste("C:\Users\Public\Downloads") == false){
-         mkdir("C:\Users\Public\Downloads");
-    }
-    $FileToSave = "C:\Users\Public\Downloads"; // variavel que recebe o path da pasta criada
-    //TODO : Criar uma variavel boolean que verifique que o dito ficheiro existe e só depois avançar
-    $Content = file_get_contents("teste.txt"); // recebe o conteudo
-    file_put_contents($FileToSave, $Content); // guarda na pasta com o dito path estabelecido anteriormente e o conteudo anteriormente existente
-
-}//guardarDownload
-
-
-
 //-----------------------------Protocologo de execução
 //$NasaImages = new NasaConsumer(recolherTexto());
 //$NasaImages->setLimitOfPages(2);
