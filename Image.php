@@ -1,8 +1,8 @@
 <?php
 
 class Image {
-    public  string $imageUrl;
-    public string $imageTitle;
+    public   $imageUrl;
+    public   $imageTitle;
 
 
     public function __construct($pImageUrl, $pImageTitle)

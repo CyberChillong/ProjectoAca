@@ -1,5 +1,6 @@
 <?php
 date_default_timezone_set("Europe/Lisbon");
+include("Image.php");
 class NasaConsumer {
     private  $keyword ; // key word da pesquisa
     const NASA_CONSUMER_SYSTEM_FOLDER_PATH = "C:/Users/Public/Documents/NasaConsumerFiles/";
@@ -62,14 +63,7 @@ class NasaConsumer {
 
     private function confirmExistenceOfFolderOrFile($Path):bool{
         return  file_exists($Path);
-
-
-
     }//confirmExistenceOfFolderOrFile
-
-
-
-
 
     public function saveAllPossibleJsonUrl(){
         $JsonUrls = $this->builderOfViableUrls();
@@ -102,8 +96,33 @@ class NasaConsumer {
     }//saveAllPossibleJsonUrl
 
     public function extractImagesUrlsFromJson(){
+            $ImageUrlArray = [];
+            $JsonFile =  file_get_contents(self::NASA_CONSUMER_PATH_FOR_JSON_PAGES_URLS.$this->JSON_FILE_NAME);
+            $JsonContent = json_decode($JsonFile, true);
+            $item = $JsonContent['JsonUrls'];
+            foreach ($item as $url){
+                $JsonImageFile =  file_get_contents($url);
+                $JsonImageContent = json_decode($JsonImageFile, true);
+                $imageArray = $JsonImageContent['items'];
+                foreach ($imageArray as $image){
+                    echo($image['images']['full']['alt'].PHP_EOL);
+                    array_push($ImageUrlArray ,new Image(self::BASE_IMAGE_URL.$image['images']['full']['src'], $image['images']['full']['alt']));
+                }
+            }
+            if($this->confirmExistenceOfFolderOrFile(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS)==true){
+                file_put_contents(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS.$this->JSON_FILE_NAME , json_encode(array('JsonImageUrls' =>$ImageUrlArray)));
+                echo "Image url saved successfully";
+            }else{
+                mkdir(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS  , 755);
+                file_put_contents(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS.$this->JSON_FILE_NAME , json_encode(array('JsonImageUrls' =>$ImageUrlArray)));
+                echo "Image url saved successfully";
+            }
+    }//extractImagesUrlsFromJson
+
+    public static  function  justDownloadTheImagesDirectlyFromJsonPagesUrls($pJsonFileName):Array{
         $ImageUrlArray = [];
-        $JsonFile =  file_get_contents(self::NASA_CONSUMER_PATH_FOR_JSON_PAGES_URLS.$this->JSON_FILE_NAME);
+        $JsonFileName = sprintf("%s.json",$pJsonFileName);
+        $JsonFile =  file_get_contents(self::NASA_CONSUMER_PATH_FOR_JSON_PAGES_URLS.$JsonFileName);
         $JsonContent = json_decode($JsonFile, true);
         $item = $JsonContent['JsonUrls'];
         foreach ($item as $url){
@@ -111,17 +130,12 @@ class NasaConsumer {
             $JsonImageContent = json_decode($JsonImageFile, true);
             $imageArray = $JsonImageContent['items'];
             foreach ($imageArray as $image){
-             array_push($ImageUrlArray ,self::BASE_IMAGE_URL.$image['images']['full']['src']);
+                array_push($ImageUrlArray ,self::BASE_IMAGE_URL.$image['images']['full']['src']);
             }
         }
-        if($this->confirmExistenceOfFolderOrFile(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS)==true){
-        file_put_contents(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS.$this->JSON_FILE_NAME , json_encode(array('JsonImageUrls' =>$ImageUrlArray)));
-        echo "Image url saved successfully";
-        }else{
-            mkdir(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS  , 755);
-            file_put_contents(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS.$this->JSON_FILE_NAME , json_encode(array('JsonImageUrls' =>$ImageUrlArray)));
-            echo "Image url saved successfully";
-        }
-    }//extractImagesUrlsFromJson
+        return $ImageUrlArray;
+    }//justDownloadTheImagesDirectlyFromJsonPagesUrls
+
+
 
 }//NasaConsumer
