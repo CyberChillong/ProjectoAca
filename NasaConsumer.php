@@ -4,6 +4,7 @@ class NasaConsumer {
     private  $keyword ; // key word da pesquisa
     const NASA_CONSUMER_SYSTEM_FOLDER_PATH = "C:/Users/Public/Documents/NasaConsumerFiles";
     const NASA_CONSUMER_PATH_FOR_ALL_SUB_FOLDERS ="C:/Users/Public/Documents/NasaConsumerFiles/";
+    const BASE_IMAGE_URL = "https://www.jpl.nasa.gov";
     private $JSON_FILE_NAME;
     private $limit;
 
@@ -94,5 +95,21 @@ class NasaConsumer {
         }
     }//saveAllPossibleJsonUrl
 
+    public function extractImagesUrlsFromJson(){
+        $image = array();
+        $JsonFile =  file_get_contents(self::NASA_CONSUMER_PATH_FOR_ALL_SUB_FOLDERS.$this->JSON_FILE_NAME);
+        $JsonContent = json_decode($JsonFile, true);
+        $item = $JsonContent['JsonUrls'];
 
+       foreach ($item as $url){
+           $JsonImageFile =  file_get_contents($url);
+           $JsonImageContent = json_decode($JsonImageFile, true);
+           $imageArray = $JsonImageContent['items'];
+           foreach ($imageArray as $image){
+               array_push($image , self::BASE_IMAGE_URL.$image['images']['full']['src']);
+               file_put_contents(self::NASA_CONSUMER_PATH_FOR_ALL_SUB_FOLDERS."Teste.json" , json_encode(array('JsonImageUrls' =>$image)));
+           }
+       }
+       echo "Sucesso!";
+    }//extractImagesUrlsFromJson
 }//NasaConsumer
