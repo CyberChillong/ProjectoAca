@@ -20,6 +20,7 @@
  *
  *
  */
+
 include("NasaConsumer.php");
 define ("SLOT_DA_ULTIMA_PALAVRA", count($argv)-1);
 
@@ -76,19 +77,13 @@ function guardarDownload(){
 
 }//guardarDownload
 
-function criarFicheiro(){
-    file_put_contents("C:\Users\Public\Downloads\Links.txt", "Conteudo");
-}//criarFicheiro
 
-//echo (pastaExiste("C:\Users\Public\Downloads"));
-//guardarDownload();
-criarFicheiro();
-//echo (recolherTexto());
 
 //-----------------------------Protocologo de execução
-$NasaImages = new NasaConsumer(recolherTexto());
-$NasaImages->setLimitOfPages(2);
-$NasaImages->saveAllPossibleJsonUrl();
-$NasaImages->extractImagesUrlsFromJson();
+//$NasaImages = new NasaConsumer(recolherTexto());
+//$NasaImages->setLimitOfPages(2);
+//$NasaImages->saveAllPossibleJsonUrl();
+//$NasaImages->extractImagesUrlsFromJson();
+//NasaConsumer::justDownloadTheImagesDirectlyFromJsonPagesUrls("20191228");
 
 //-----------------------------Protocologo de execução
