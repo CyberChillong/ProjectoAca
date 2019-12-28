@@ -122,7 +122,6 @@ class NasaConsumer {
             file_put_contents(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS.$this->JSON_FILE_NAME , json_encode(array('JsonImageUrls' =>$ImageUrlArray)));
             echo "Image url saved successfully";
         }
-
     }//extractImagesUrlsFromJson
 
 }//NasaConsumer

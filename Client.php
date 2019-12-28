@@ -76,10 +76,6 @@ function guardarDownload(){
     }
 }//guardarDownload
 
-function criarFicheiro(){
-    file_put_contents("C:\Users\Public\Downloads\Links.txt", "Conteudo");
-}//criarFicheiro
-
 //echo (pastaExiste("C:\Users\Public\Downloads"));
 //guardarDownload();
 criarFicheiro();
