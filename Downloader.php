@@ -3,71 +3,45 @@
 
 class Downloader
 {
-     private string $path;
-     private array $imageArray;
+     const NASA_CONSUMER_PATH_FOR_DOWNLOADED_IMAGES ="C:/Users/Public/Pictures/";
+     private  $Name;
+     private  $imageUrl;
 
-    function __construct($path , $imageArray) // construtor que recebe uma string que é a Keyword da pesquisa e um limit para a procura
+    function __construct($pName , $pImageUrl) // construtor que recebe uma string que é a Keyword da pesquisa e um limit para a procura
     {
-        $this->path = $path;
-        $this->imageArray = $imageArray;
+        $this->Name = $pName;
+        $this->imageUrl = $pImageUrl;
     }//__construct
 
 
     function download(){
-        $curlHandler = curl_init();
+        $ch = curl_init(); //inicialização
+        if ($ch){
 
-        for($i = 0;
-        $i <= $this->imageArray.sizeof();
-        $i++){
-            $strUrl = $this->imageArray[$i];
+            curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_URL, $this->imageUrl);
+            curl_setopt($ch, CURLOPT_USERAGENT, "My bot");
 
-            $bResult = curl_setopt(
-                $curlHandler,
-                CURLOPT_URL,
-                $strUrl
-            );
-        }//for
 
-        $bResult = curl_setopt(
-            $curlHandler,
-            CURLOPT_SSL_VERIFYPEER,
-            false
-        );
+            $bin = curl_exec($ch);
 
-        $bResult = curl_setopt(
-            $curlHandler,
-            CURLOPT_RETURNTRANSFER,
-            true
-        );
-        $bResult = curl_setopt(
-            $curlHandler,
-            CURLOPT_BINARYTRANSFER,
-            true
-        );
+            return $bin;
+        }//if
+        return false;
 
-        $bResult = curl_setopt(
-            $curlHandler,
-            CURLOPT_ENCODING,
-            "" //automatic encoding handling
-        );
 
-        $bResult = curl_setopt(
-            $curlHandler,
-            CURLOPT_USERAGENT,
-            "Mozilla\/5.0 (Windows NT 6.3; WOW64; rv:54.0) Gecko\/20100101 Firefox\/54.0"
-        );
-        $bin = curl_exec($curlHandler);
-        return $bin;
+
     }//download
 
-    function guardarDownload(){
+    function saveDownload(){
         //se a pasta não existir é criada com aquele path
-        if(file_exists($this->path) == false){
-            mkdir($this->path);
+        if(file_exists(self::NASA_CONSUMER_PATH_FOR_DOWNLOADED_IMAGES) == false){
+            mkdir(self::NASA_CONSUMER_PATH_FOR_DOWNLOADED_IMAGES);
         }else {
-            $FileToSave = $this->path;
-            $Content = file_get_contents($this->download()); // recebe o conteudo
-            file_put_contents($FileToSave, $Content); // guarda na pasta com o dito path estabelecido anteriormente e o conteudo anteriormente existente
+            $FileToSave = self::NASA_CONSUMER_PATH_FOR_DOWNLOADED_IMAGES.$this->Name;
+            file_put_contents($FileToSave, $this->download()); // guarda na pasta com o dito path estabelecido anteriormente e o conteudo anteriormente existente
+
         }
     }//guardarDownload
 }
