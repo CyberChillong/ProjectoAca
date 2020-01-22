@@ -1,4 +1,8 @@
 <?php
+/*
+ * @SuppressWarnings(PHPMD.LongVariable)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * */
 date_default_timezone_set("Europe/Lisbon");
 include("Downloader.php");
 class NasaConsumer {
@@ -111,9 +115,11 @@ class NasaConsumer {
                         $JsonImageContent = json_decode($JsonContent, true);
                         $imageArray = $JsonImageContent['items'];
                         foreach ($imageArray as $image){
+                            echo "image url : ".self::BASE_IMAGE_URL.$image['images']['full']['src']." saved".PHP_EOL;
                             array_push($ImageUrlArray ,self::BASE_IMAGE_URL.$image['images']['full']['src']);
                         }
             }
+
             if($this->confirmExistenceOfFolderOrFile(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS)==true){
                 if($this->confirmExistenceOfFolderOrFile(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS.$this->TSV_FILE_NAME==true)){
                     $TsvFile = fopen(self::NASA_CONSUMER_PATH_FOR_JSON_IMAGES_URLS.$this->TSV_FILE_NAME, "a");
@@ -179,9 +185,6 @@ class NasaConsumer {
         }
 
         }
-
-
-
     }//directDownloadFromComposedUrls
 
 
